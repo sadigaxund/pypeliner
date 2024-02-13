@@ -1,13 +1,16 @@
 
 from .Types import *
-from abc import ABC, ABCMeta
+import time
 
+def empty():
+    # does nothing
+    ...
 
 class SinkNode:
     
     # LOADER 
     def __loader__(self, value: Any) -> Any:
-        raise NotImplementedError("The load function was not implemented!")
+        raise NotImplementedError("Functionality to load record was not implemented!")
 
     @property
     def loader(self) -> Callable[[DefaultOutputType], Optional[bool]]:
@@ -23,12 +26,13 @@ class SinkNode:
         raise NoOutputAttributeWarning(self)
     
     # INPUT
-    def __input__(self):
-        raise InputNotLinkedError
 
     @property
     def input(self) -> DefaultOutputType:
-        return self.__input__()
+        if not self.__input__:
+            raise InputNotLinkedError
+        else:
+            return self.__input__
 
     @input.setter
     def input(self, value: DefaultInputType):
@@ -40,7 +44,7 @@ class SinkNode:
         def create_input_function():
             yield from value
 
-        self.__input__ = create_input_function
+        self.__input__ = create_input_function()
         
     # MAIN LOGIC
     # Options:
@@ -48,26 +52,25 @@ class SinkNode:
     #     2. Pass mass loader function that has implementation to load all records
     #     3. Use Custom loader function: KafkaLoader
     
-    def load_one(self): ...
-    def load_bulk(self): ...
-    # You can run manually:
-
-    # or Let the node do its jon
         
-    
-    def __init__(self) -> None:
+    def __init__(self, udf_loader, input=None) -> None:
+        self.__input__ = None
         self.future_value = None
-        pass
-    
+        self.loader = udf_loader
+        self.__counter__ = 0
+        if input is not None:
+            self.input = input
     
     SENTINEL = 0x73656E74696E656C
     
     def __next__(self):
         if self.future_value is not None:
+            retval = self.future_value
             self.future_value = None
-            return self.future_value
+            return retval
         try:
-            return next(self.input)
+            retval = next(self.input)
+            return retval
         except StopIteration:
             return SinkNode.SENTINEL
     
@@ -80,9 +83,8 @@ class SinkNode:
             case None:
                 # means we could still have something
                 self.future_value = self.__next__()
-                if self.future_value == SinkNode.SENTINEL:
-                    return False
-                ...
+                return self.future_value != SinkNode.SENTINEL
+
             case SinkNode.SENTINEL:
                 # means it already ended
                 return False
@@ -91,32 +93,22 @@ class SinkNode:
                 # means we already checked before, and there is at least f_val
                 return True
             
-    def load_record(self, record):
-        raise NotImplemented("Functionality to load record was not implemented!")
-    
-    def load_bulk(self):        
+    def __load_bulk(self):        
         try:
             # Started Loading...
             while True:
                 value = yield  # get value from as you go
-                self.load_record(value)
+                self.loader(value)
         finally:
             # Finished Loading...
             ...
     
     def start(self):
-        self.ETL = self.load_bulk()
+        self.ETL = self.__load_bulk()
         self.ETL.send(None) # Generator (for loader) started
     
     def close(self):
         self.ETL.close()  # Generator (for loader) stopped
-    
-    def __enter__(self): 
-        self.start()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback): 
-        self.close()
         
     def step(self) -> bool:
         record = self.__next__()
@@ -127,18 +119,37 @@ class SinkNode:
         self.ETL.send(record)
         return False
     
+    def __back_pressure__(self, chunk_size, backoff_seconds):
+        self.__counter__ += 1
+        
+        if self.__counter__ >= chunk_size:
+            time.sleep(backoff_seconds)
+            self.__counter__ = 0
+    
+    
     def run(self, 
-            at_start: Callable = None, 
-            at_exit: Callable = None, 
-            per_iteration: Callable = None, 
-            fallback: Callable = None,
+            on_start: Callable = empty,
+            on_exit: Callable = empty,
+            after_each_load: Callable = empty,
+            before_each_load: Callable = empty,
+            on_fallback: Callable = empty,
             blacklist: List = None,
             whitelist: List = None,
             backoff_seconds: int = 0,
             chunk_size: int = 500) -> None:
         self.start()
+        on_start()
         while self.more():
-            self.step()
+            before_each_load()
+            try:
+                self.step()
+            except Exception as e:
+                # TODO: Refactor so that, it would pass record as a parameter
+                on_fallback()
+            finally:
+                after_each_load()
+                self.__back_pressure__(chunk_size, backoff_seconds)
+        on_exit()
         self.close()
         
     
