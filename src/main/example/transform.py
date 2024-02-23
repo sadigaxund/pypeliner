@@ -1,4 +1,4 @@
-from pypeline.cores.maker import processor
+from pypeliner.tags.process import processor
 
 immutable = True
 fallback = 0

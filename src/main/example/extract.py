@@ -1,4 +1,4 @@
-from pypeline.cores.maker import execute, iterate, available
+from pypeliner.tags.extract import execute, iterate, available
 
 mylist = list(range(10))
 index = 0

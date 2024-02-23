@@ -1,5 +1,6 @@
 
 from ..types import *
+from .abstract import AbstractCore
 from typing import NoReturn, Callable
 from copy import deepcopy
 # Seed has behavior:
@@ -14,7 +15,7 @@ from copy import deepcopy
 
 no_change = lambda x: x
 
-class ProcessorCore:
+class ProcessorCore(AbstractCore):
     #############
     # MAIN
     #############

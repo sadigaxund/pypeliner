@@ -1,5 +1,6 @@
 
 from ..types import *
+from .abstract import AbstractCore
 from typing import NoReturn, Callable
 # Seed has behavior:
 # * available        - tells if there might be next phase
@@ -11,7 +12,8 @@ from typing import NoReturn, Callable
 # * every other: checks state, if available then run again, reset state
 # # if no more: then return stop iteration
 
-class ExtractorCore:
+
+class ExtractorCore(AbstractCore):
     #############
     # MAIN
     #############
