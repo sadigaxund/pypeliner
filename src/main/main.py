@@ -1,14 +1,12 @@
-from example import extract, transform, load
+from example import etl
 from pypeliner.nodes.ingress import IngressNode
 from pypeliner.nodes.process import ProcessorNode
 from pypeliner.nodes.egress import EgressNode
 from pypeliner.maker import *
 
-gen = create_extractor_core(extract)
-mod = create_processor_core(transform)
-lod = create_loader_core(load)
+gen = create_extractor_core(etl)
+mod = create_processor_core(etl)
+lod = create_loader_core(etl)
 
-
-node = IngressNode(gen) >> ProcessorNode(mod) >> EgressNode(lod)
-
-node.run()
+pipeline = IngressNode(gen) >> ProcessorNode(mod) >> EgressNode(lod)
+pipeline.run()

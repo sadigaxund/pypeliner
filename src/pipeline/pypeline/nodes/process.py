@@ -1,5 +1,5 @@
 
-from ....pipeline.pypeline.types import *
+from ....main.pypiliner.types import *
 from typing import NoReturn, Callable
 # Seed has behavior:
 # * available        - tells if there might be next phase
