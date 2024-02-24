@@ -1,12 +1,4 @@
-from .cores.extractor import ExtractorCore
-from .cores.processor import ProcessorCore
-from .cores.loader import LoaderCore
-
-###################
-# TAGS  ###########
-###################
-
-
+from .cores import *
 
 ###################
 # HELPERS #########
