@@ -1,0 +1,48 @@
+id = "compass/crawler-google-places"
+hash = "nwua9Gu5YrADL7ZDj"
+build = "latest"
+date_key = "reviewsStartDate"
+date_format = "%Y-%m-%dT%H:%M:%S"
+
+[recurrent_limiters]
+interval = 7
+timeout = 302400
+memory = 32768
+
+[bootstrap_limiters]
+
+
+[input]
+countryCode = "sa"
+deeperCityScrape = true
+includeWebResults = false
+language = "en"
+oneReviewPerRow = false
+maxCrawledPlacesPerSearch = 60000
+maxImages = 0
+maxReviews = 999999
+onlyDataFromSearchPage = false
+reviewsSort = "newest"
+reviewsStartDate = "2023-11-09T00:00:00"
+scrapeResponseFromOwnerText = false
+scrapeReviewId = true
+scrapeReviewUrl = false
+scrapeReviewerId = false
+scrapeReviewerName = false
+scrapeReviewerUrl = false
+searchMatching = "all"
+
+searchStringsArray = [
+  "\"Hotel\" OR \"Hotels\" OR \"Extended stay hotel\"",
+  "\"Vacation Rental\" OR \"Holiday village rental\"",
+  "\"House\" OR \"Guest house\" OR \"Cabin\" OR \"Cottage\" OR \"Villa\" OR \"Chalet\"",
+  "\"Apartment\" OR \"Commercial apartments\"",
+  "\"Resort\"  OR \"Inn\" OR \"Bed and breakfast\"",
+  "\"1-star\" OR \"2-star\" OR \"3-star\" OR \"4-star\" OR \"5-star\""
+]
+
+skipClosedPlaces = false
+zoom = 17
+reviewsFilterString = ""
+placeMinimumStars = ""
+allPlacesNoSearchAction = ""

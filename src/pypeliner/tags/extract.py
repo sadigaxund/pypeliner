@@ -9,3 +9,7 @@ def iterate(func):
 def available(func):
     func.udf_available = True
     return func
+
+def input(func):
+    func.udf_input = True
+    return func

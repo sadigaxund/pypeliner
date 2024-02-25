@@ -1,0 +1,26 @@
+id = "maxcopell/tripadvisor"
+hash = "dbEyMBriog95Fv8CW"
+build = "latest"
+date_key = ""
+date_format = "" 
+
+[recurrent_limiters]
+maxItems = 50000
+memory = 2048
+
+[bootstrap_limiters]
+maxItems = 50000
+memory = 2048
+
+[input]
+currency = "USD"
+includeAttractions = false
+includeHotels = true
+includePriceOffers = true
+includeRestaurants = false
+includeTags = true
+includeVacationRentals = true
+language = "en"
+locationFullName = "Saudi Arabia"
+checkInDate = ""
+checkOutDate = ""

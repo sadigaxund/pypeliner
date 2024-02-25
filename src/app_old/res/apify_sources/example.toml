@@ -1,0 +1,16 @@
+id = "compass/crawler-google-places"
+hash = "nwua9Gu5YrADL7ZDj"
+build = "latest"
+date-key = "reviewsStartDate"
+
+[recurrent-limiters]
+# interval = 7
+# timeout = 302400
+# memory = 32768
+
+[bootstrap-limiters]
+# maxItems = 50000
+# memory = 2048
+
+[input]
+# Input from Apify

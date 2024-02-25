@@ -1,0 +1,4 @@
+subscribe_date = 2023-05-24
+requests_per_second = 10
+monthly = 500000
+quota_used = 0

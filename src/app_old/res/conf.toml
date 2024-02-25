@@ -1,0 +1,179 @@
+[Services]
+	[Services.Orchestrator]
+	HOST = 'ser6'
+	PORT = 6060
+	LOGS = './logs'
+
+	[Services.Apify]
+	HOST = 'ser6'
+	PORT = 6061
+	LOGS = './logs'
+
+	[Services.Extractor]
+	HOST = 'ser6'
+	PORT = 6062
+	LOGS = './logs'
+
+	[Services.Reporter]
+	HOST = 'ser6'
+	PORT = 6063
+	LOGS = './logs'
+
+	[Services.Fyrefuse]
+	HOST = 'ser6'
+	PORT = 8000
+	LOGS = './logs'
+
+[Kafka]
+BROKER="ser6:9092"
+	[Kafka.Topics]
+		[Kafka.Topics.google_maps]
+		name = "apify-google-maps"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.tripadvisor_reviews]
+		name = "apify-tripadvisor-reviews"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.tripadvisor_listings]
+		name = "apify-tripadvisor-listings"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.airbnb_reviews]
+		name = "rapidapi-airbnb-reviews"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.airbnb_listings]
+		name = "transparent-airbnb-listings"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.airbnb_operational]
+		name = "transparent-airbnb-operational"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.booking_reviews]
+		name = "rapidapi-booking-reviews"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.booking_listings]
+		name = "rapidapi-booking-listings"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.hotels_reviews]
+		name = "rapidapi-hotels-reviews"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.hotels_listings]
+		name = "rapidapi-hotels-listings"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.priceline_reviews]
+		name = "rapidapi-priceline-reviews"
+		retention=259200000 # 3 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.priceline_listings]
+		name = "rapidapi-priceline-listings"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+		[Kafka.Topics.flight_schedules]
+		name = "snowflake-flight-schedules"
+		retention=2678400000 # 31 days in ms
+		max_message_bytes=1048576 # 10Mb in bytes
+		replication_factor=1
+		partitions=1
+
+[Sources]
+	[Sources.flight_schedules]
+	USER = "N.Alwuhayb@axs.sa"
+	PASSWORD = "Mt@123123"
+	ACCOUNT = "sp66732.west-europe.azure"
+	EARLIEST_DATE = 2019-01-01
+	DATE_FORMAT = "%Y-%m-%d"
+
+	[Sources.airbnb_reviews]
+	API_KEY = "14d96c6fc2msh7414df2fb7e40ddp10513djsn985426003f23"
+	API_HOST = "airbnb-listings.p.rapidapi.com"
+	EARLIEST_DATE = 2023-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.booking_reviews]
+	API_KEY = "d78a75c3b6msh40b936d412902f1p1c65a5jsn73548bc64cd7"
+	API_HOST = "booking-com.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.booking_listings]
+	API_KEY = "d78a75c3b6msh40b936d412902f1p1c65a5jsn73548bc64cd7"
+	API_HOST = "booking-com.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.priceline_listings]
+	API_KEY = "14d96c6fc2msh7414df2fb7e40ddp10513djsn985426003f23"
+	API_HOST = "priceline-com-provider.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.priceline_reviews]
+	API_KEY = "14d96c6fc2msh7414df2fb7e40ddp10513djsn985426003f23"
+	API_HOST = "priceline-com-provider.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.hotels_reviews]
+	API_KEY = "14d96c6fc2msh7414df2fb7e40ddp10513djsn985426003f23"
+	API_HOST = "hotels-com-provider.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.hotels_listings]
+	API_KEY = "14d96c6fc2msh7414df2fb7e40ddp10513djsn985426003f23"
+	API_HOST = "hotels-com-provider.p.rapidapi.com"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+	[Sources.airbnb_operational]
+	API_HOST = "db.seetransparent.com"
+	USERNAME = "N.Alwuhayb@axs.sa"
+	PASSWORD = "MT@123!"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d"
+
+	[Sources.airbnb_listings]
+	API_HOST = "db.seetransparent.com"
+	USERNAME = "N.Alwuhayb@axs.sa"
+	PASSWORD = "MT@123!"
+	EARLIEST_DATE = 2000-01-01 00:00:00
+	DATE_FORMAT = "%Y-%m-%d"
+
+	[Sources.Apify]
+	TOKEN = "apify_api_0Nt3r6D7ycAkWPSH9chAWMFcBnsQsF2kKY1P"
+	MAX_RESULTS_LIMIT = 99999999
+	MAX_MEMORY_LIMIT = 32768
+	NO_TIMEOUT = 0
+	EARLIEST_DATE = 2000-01-01 00:00:00
+        

@@ -1,0 +1,24 @@
+id = "maxcopell/tripadvisor-reviews"
+hash = "Hvp4YfFGyLM635Q2F"
+build = "latest"
+date_key = "lastReviewDate"
+date_format = "%Y-%m-%d"
+
+[recurrent_limiters]
+interval = 1
+maxItems = 3000
+memory = 2048
+
+[bootstrap_limiters]
+memory = 2048
+
+[input]
+maxItemsPerQuery = 999999
+scrapeReviewerInfo = true
+language = "en"
+    [[input.startUrls]]
+    url = "https://www.tripadvisor.com/Attractions-g293991-Activities-Saudi_Arabia.html"
+    [[input.startUrls]]
+    url = "https://www.tripadvisor.com/Hotels-g293991-Saudi_Arabia-Hotels.html"
+    [[input.startUrls]]
+    url = "https://www.tripadvisor.com/Tourism-g293991-Saudi_Arabia-Vacations.html"

@@ -1,9 +1,10 @@
-from pypeliner.tags.extract import extract, iterate, available
+from pypeliner.tags.extract import execute, iterate, available
 
 mylist = list(range(10))
 index = 0
 
-@extract
+
+@execute
 def run():
     return mylist[index]
 

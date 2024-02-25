@@ -4,10 +4,11 @@ from .cores import *
 
 __all__ = [
     'AbstractNode',
-    'EgressNode',
-    'IngressNode',
+    'SinkNode',
+    'SourceNode',
     'ProcessNode',
     'JunctionNode',
+    'FunnelNode',
 ]
 
 class AbstractNode(TP.AbstractClass, metaclass=TP.AbstractMetadata):
@@ -44,7 +45,46 @@ class AbstractNode(TP.AbstractClass, metaclass=TP.AbstractMetadata):
         self.__output = value
 
 
-class EgressNode(AbstractNode):
+class SourceNode(AbstractNode):
+    def __init__(self, extractor_core: ExtractorCore, flatten=False) -> TP.Return0:
+        self.flatten = flatten
+        super().__init__(extractor_core)
+
+    def run(self):
+        if self.flatten:
+            for record in self.core:
+                if isinstance(record, TP.Iterable):
+                    # TODO: Give an option to raise error in case if no iterable returned
+                    yield from record
+        else:
+            yield from self.core
+            
+    @property
+    def input(self):
+        return super().input
+    
+    @input.setter
+    def input(self, new_input):
+        self.core.input = new_input
+
+    ############################################################
+    # Node Operations
+    ############################################################
+
+    def __rshift__(self, other: AbstractNode):
+        other.input = self.run()
+        return other
+
+    def __lshift__(self, other: AbstractNode):
+        # TARGET: self
+        raise NotImplementedError("SourceNode should not be linked into.")
+
+    # RSH1: A >> B -> B
+    # RSH2: B >> A -> A
+    # LSH1: A << B -> A
+    # LSH2: B << A -> B
+    
+class SinkNode(AbstractNode):
     def __init__(self, loader_core: LoaderCore) -> TP.Return0:
         super().__init__(loader_core)
 
@@ -59,7 +99,7 @@ class EgressNode(AbstractNode):
     ############################################################
 
     def __rshift__(self, other: AbstractNode):
-        raise NotImplementedError("EgressNode should not be linked from.")
+        raise NotImplementedError("SinkNode should not be linked from.")
 
     def __lshift__(self, other: AbstractNode):
         # TARGET: self
@@ -71,31 +111,6 @@ class EgressNode(AbstractNode):
     # LSH1: A << B -> A
     # LSH2: B << A -> B
 
-
-class IngressNode(AbstractNode):
-    def __init__(self, extractor_core: ExtractorCore) -> TP.Return0:
-        super().__init__(extractor_core)
-
-    def run(self):
-        self.output = (record for record in self.core)
-        return self.output
-
-    ############################################################
-    # Node Operations
-    ############################################################
-
-    def __rshift__(self, other: AbstractNode):
-        other.input = self.run()
-        return other
-
-    def __lshift__(self, other: AbstractNode):
-        # TARGET: self
-        raise NotImplementedError("IngressNode should not be linked into.")
-
-    # RSH1: A >> B -> B
-    # RSH2: B >> A -> A
-    # LSH1: A << B -> A
-    # LSH2: B << A -> B
 
 
 class ProcessNode(AbstractNode):
@@ -121,4 +136,9 @@ class ProcessNode(AbstractNode):
 
 
 class JunctionNode(AbstractNode): ...
+# TODO: FINISH
+
+
+class FunnelNode(AbstractNode):
+    ...
 # TODO: FINISH
