@@ -7,7 +7,7 @@ raise_error = True
 
 @processor
 def add_1(value):
-    return value + 7
+    return value + 77
 
 
 @processor

@@ -6,6 +6,8 @@ __all__ = [
     'ExtractorCore',
     'LoaderCore',
     'ProcessorCore',
+    'JunctionCore',
+    'FunnelCore',
 ]
 
 no_change = lambda x: x
@@ -17,7 +19,7 @@ class ExtractorCore(AbstractCore):
     # MAIN
     #############
 
-    def __init__(self, udf_execute=None, udf_iterate=None, udf_available=None, udf_input_handler=None, input=None) -> TP.Return0:
+    def __init__(self, udf_execute=None, udf_iterate=None, udf_available=None, udf_input_handler=None, input=None) -> TP.Void:
         self.any_available = True
         self.execute = udf_execute if udf_execute else self.__execute__
         self.iterate = udf_iterate if udf_iterate else self.__iterate__
@@ -65,7 +67,7 @@ class ExtractorCore(AbstractCore):
         return self.__execute__
 
     @input.setter
-    def input(self, new_input: TP.Function) -> TP.Return0:
+    def input(self, new_input: TP.Function) -> TP.Void:
         if self.input_handler and new_input:
             self.input_handler(new_input)
             
@@ -75,7 +77,7 @@ class ExtractorCore(AbstractCore):
         return self.__execute__
 
     @execute.setter
-    def execute(self, new_behaviour: TP.Function) -> TP.Return0:
+    def execute(self, new_behaviour: TP.Function) -> TP.Void:
         self.__execute__ = new_behaviour
 
     @property
@@ -84,7 +86,7 @@ class ExtractorCore(AbstractCore):
         return self.any_available
 
     @available.setter
-    def available(self, new_behaviour: TP.Function) -> TP.Return0:
+    def available(self, new_behaviour: TP.Function) -> TP.Void:
         self.__available__ = new_behaviour
 
     @property
@@ -92,7 +94,7 @@ class ExtractorCore(AbstractCore):
         return self.__iterate__
 
     @iterate.setter
-    def iterate(self, new_behaviour: TP.Function) -> TP.Return0:
+    def iterate(self, new_behaviour: TP.Function) -> TP.Void:
         self.__iterate__ = new_behaviour
 
 class ProcessorCore(AbstractCore):
@@ -106,7 +108,7 @@ class ProcessorCore(AbstractCore):
                  raise_error=False,
                  forgiving=False,   # decides if process should be forgiving the error
                  fallback=None,   # this value will returned if process is not forgiving
-                 ) -> TP.Return0:
+                 ) -> TP.Void:
         self.__processors = (no_change,) + udf_transformers
         from copy import deepcopy
         self.clone = deepcopy if immutable else no_change
@@ -136,7 +138,7 @@ class LoaderCore(AbstractCore):
     # MAIN
     #############
 
-    def __init__(self, *udf_loaders: TP.Function) -> TP.Return0:
+    def __init__(self, *udf_loaders: TP.Function) -> TP.Void:
         self.__loaders = (no_change,) + udf_loaders
 
     def load(self, value: TP.Whatever) -> TP.Whatever:
@@ -149,11 +151,11 @@ class FunnelCore(AbstractCore):
     # MAIN
     #############
 
-    def __init__(self, udf_merger: TP.Function) -> TP.Return0:
+    def __init__(self, udf_merger: TP.Function) -> TP.Void:
         self.__merger = udf_merger
 
-    def merge(self, value1: TP.Whatever, value2: TP.Whatever) -> TP.Whatever:
-        return self.__merger(value1, value2)
+    def merge(self, *values: TP.Whatever) -> TP.Whatever:
+        return self.__merger(values)
 
 
 class JunctionCore(AbstractCore):
@@ -161,7 +163,7 @@ class JunctionCore(AbstractCore):
     # MAIN
     #############
 
-    def __init__(self, udf_divisor: TP.Function) -> TP.Return0:
+    def __init__(self, udf_divisor: TP.Function) -> TP.Void:
         self.__divisor = udf_divisor
 
     def divide(self, value) -> TP.Whatever:

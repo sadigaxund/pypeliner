@@ -8,7 +8,7 @@ from typing import (
     List,
     Tuple,
     Iterable, 
-    NoReturn as Return0,
+    NoReturn as Void,
     Optional as Maybe,
     Union as OneOf,
 )
@@ -17,7 +17,6 @@ from abc import (
     ABCMeta as AbstractMetadata, 
     abstractmethod as AbstractMethod
 )
-
 
 
 NodeInputType = Iterable[Whatever]
