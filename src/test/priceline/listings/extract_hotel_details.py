@@ -11,7 +11,6 @@ headers = {
     "X-RapidAPI-Host": "priceline-com-provider.p.rapidapi.com"
 }
 
-@processor
 def add_hotel_details_v1(hotel):
     url = "https://priceline-com-provider.p.rapidapi.com/v1/hotels/details"
 
@@ -26,7 +25,6 @@ def add_hotel_details_v1(hotel):
         "metadata_v1": metadata_v1
     }
 
-@processor
 def add_hotel_details_v2(hotel):
 
     url = "https://priceline-com-provider.p.rapidapi.com/v2/hotels/details"
@@ -54,7 +52,6 @@ def add_hotel_details_v2(hotel):
         'metadata_v2': metadata_v2
     }
 
-@processor
 def add_booking_details(hotel):
     url = "https://priceline-com-provider.p.rapidapi.com/v1/hotels/booking-details"
     print(hotel.keys())

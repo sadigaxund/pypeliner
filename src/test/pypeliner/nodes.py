@@ -75,9 +75,9 @@ class SourceNode(AbstractNode):
         other.input = self.run()
         return other
 
-    def __lshift__(self, other: AbstractNode):
-        # TARGET: self
-        raise NotImplementedError("SourceNode should not be linked into.")
+    # def __lshift__(self, other: AbstractNode):
+    #     # TARGET: self
+    #     raise NotImplementedError("SourceNode should not be linked into.")
 
     # RSH1: A >> B -> B
     # RSH2: B >> A -> A
