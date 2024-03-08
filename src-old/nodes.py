@@ -1,4 +1,4 @@
-from pypeliner import types as TP
+from . import types as TP
 
 from .cores import *
 
@@ -51,14 +51,15 @@ class SourceNode(AbstractNode):
         super().__init__(extractor_core)
 
     def run(self):
-        if self.flatten:
+        def _run():
             for record in self.core:
-                if isinstance(record, TP.Iterable):
-                    # TODO: Give an option to raise error in case if no iterable returned
+                if not self.flatten:
+                    yield record
+                elif isinstance(record, TP.Iterable):
                     yield from record
-        else:
-            yield from self.core
-            
+        self.output = _run()
+        return self
+        
     @property
     def input(self):
         return super().input
@@ -72,7 +73,12 @@ class SourceNode(AbstractNode):
     ############################################################
 
     def __rshift__(self, other: AbstractNode):
-        other.input = self.run()
+        try:
+            self.output
+        except NotImplementedError:
+            self.run()
+        finally:
+            other.input = self.output
         return other
 
     # def __lshift__(self, other: AbstractNode):
@@ -85,26 +91,34 @@ class SourceNode(AbstractNode):
     # LSH2: B << A -> B
     
 class SinkNode(AbstractNode):
-    def __init__(self, loader_core: LoaderCore) -> TP.Void:
+    def __init__(self, loader_core: LoaderCore, forgiving = False) -> TP.Void:
+        self.forgiving = forgiving
         super().__init__(loader_core)
 
     def run(self):
         for record in self.input:
-            self.core.load(record)
-
-        return True
+            try:
+                self.core.load(record)
+            except Exception as e:
+                if not self.forgiving:
+                    raise e
+        return self
 
     ############################################################
     # Node Operations
     ############################################################
 
-    # def __rshift__(self, other: AbstractNode):
-    #     raise NotImplementedError("SinkNode should not be linked from.")
+    def __rshift__(self, other: AbstractNode):
+        raise NotImplementedError("SinkNode should not be linked from.")
 
-    # def __lshift__(self, other: AbstractNode):
-    #     # TARGET: self
-    #     self.input = other.run()
-    #     return self
+    def __lshift__(self, other: AbstractNode):
+        try:
+            other.output
+        except NotImplementedError:
+            other.run()
+        finally:
+            self.input = other.output
+        return self
 
     # RSH1: A >> B -> B
     # RSH2: B >> A -> A
@@ -119,20 +133,29 @@ class ProcessNode(AbstractNode):
 
     def run(self):
         self.output = (self.core.process(record) for record in self.input)
-        return self.output
+        return self
 
     ############################################################
     # Node Operations
     ############################################################
 
     def __rshift__(self, other: AbstractNode):
-        other.input = self.run()
+        try:
+            self.output
+        except NotImplementedError:
+            self.run()
+        finally:
+            other.input = self.output
         return other
 
-    # def __lshift__(self, other: AbstractNode):
-    #     # TARGET: self
-    #     self.input = other.run()
-    #     return self
+    def __lshift__(self, other: AbstractNode):
+        try:
+            other.output
+        except NotImplementedError:
+            other.run()
+        finally:
+            self.input = other.output
+        return self
 
 
 def conjoined_enumerate(generators) -> TP.Generator[TP.List, None, None]:
@@ -159,9 +182,8 @@ class FunnelNode(AbstractNode):
 
     def run(self):
         conjoined_flows = conjoined_enumerate(self.input_flows)
-        
-        for flow in conjoined_flows:
-            yield self.core.merge(*flow)
+        self.output = (self.core.merge(*flow) for flow in conjoined_flows)
+        return self
 
     ############################################################
     # Node Operations
@@ -173,10 +195,23 @@ class FunnelNode(AbstractNode):
         new_generator = (el for el in new_input)
         self.input_flows.append(new_generator)
         return self
-
+    
     def __rshift__(self, other: AbstractNode):
-        # GIVES output
-        self.input_flows.append(other.run())
+        try:
+            self.output
+        except NotImplementedError:
+            self.run()
+        finally:
+            other.input = self.output
+        return other
+    
+    def __lshift__(self, other: AbstractNode):
+        try:
+            other.output
+        except NotImplementedError:
+            other.run()
+        finally:
+            self.input_flows.append(other.output)
         return self
 
 
@@ -212,7 +247,6 @@ class JunctionNode(AbstractNode):
             pass
         
         def __iter__(self):
-            self.output.iterate()
             return self
 
         def __next__(self):
@@ -220,38 +254,45 @@ class JunctionNode(AbstractNode):
             
     
     def __init__(self, junction_core: JunctionCore, outflows = 2, input = None) -> TP.Void:
-        self.core = junction_core
         self.outflows = outflows
         self.input = input
+        super().__init__(junction_core)
+        
         
     def __getitem__(self, key):
-        return JunctionNode.OutputSelector(self.output, key)
+        try:
+            self.output
+        except NotImplementedError:
+            self.run()
+        finally:
+            return JunctionNode.OutputSelector(self.output, key)
 
     def run(self):
-        ...
-                    
-    def __rshift__(self, other: AbstractNode):
-        other.input = self[self.output_pointer]
-        self.output_pointer += 1
+        if isinstance(self.input, TP.Iterable):
+            self.output = (self.core.divide(el) for el in self.input)
+            self.output = JunctionNode.OutputGenerator(self.output, self.outflows)
+            self.output_pointer = 0
         return self
     
-    @property
-    def input(self):
-        return self.__input
+    def get_next(self):
+        try:
+            self.output
+        except NotImplementedError:
+            self.run()
+        finally:
+            self.output_pointer += 1
+            return self[self.output_pointer - 1]
+                    
+    def __rshift__(self, other: AbstractNode):
+        other.input = self.get_next()
+        return other
     
-    @input.setter
-    def input(self, value):
-        self.__input = (self.core.divide(el) for el in value)
-        self.output = JunctionNode.OutputGenerator(self.input, self.outflows)
-        self.output_pointer = 0
+    def __lshift__(self, other: AbstractNode):
+        try:
+            other.output
+        except NotImplementedError:
+            other.run()
+        finally:
+            self.input = other.output
+        return self
 
-    @property
-    def output(self):
-        if isinstance(self.__output, NotImplementedError):
-            raise self.__output
-
-        return self.__output
-
-    @output.setter
-    def output(self, value):
-        self.__output = value

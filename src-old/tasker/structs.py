@@ -1,9 +1,7 @@
 from typing import Any
 
-
 def __create_function():
     from typing import Union, List, Any
-    
     global Function
 
     class Function:
@@ -21,15 +19,17 @@ def __create_function():
             return self.call()
     
     Function.ThatDoesNothing = Function(lambda: None)
+    return Function
 
 def __create_task():
-    from .policies import RetryPolicy, ErrorStrategy
+    from .policies import ErrorStrategy, RetryPolicy
+    from functools import wraps
     global Task
     class Task:
         def __init__(self,
                      function: Function,
-                     retry_policy: RetryPolicy = RetryPolicy.Idempotent(),
-                     error_strategy: ErrorStrategy = ErrorStrategy.NeverHandle(),
+                     retry_policy = RetryPolicy.Idempotent(),
+                     error_strategy = ErrorStrategy.NeverHandle(),
                      name=None,
                      description=None,
                      ) -> None:
@@ -53,6 +53,7 @@ def __create_task():
                    description=None,
                    ) -> None: ...
 
+        @classmethod
         def make(function: Function,
                    retry_policy: RetryPolicy = RetryPolicy.Idempotent(),
                    error_strategy: ErrorStrategy = ErrorStrategy.NeverHandle(),
@@ -61,6 +62,8 @@ def __create_task():
                    ) -> None: ...
         
         class Pipeline:...
+
+        @classmethod
         def enqueue(pipeline: Pipeline,
                     function: Function,
                     retry_policy: RetryPolicy = RetryPolicy.Idempotent(),
@@ -69,7 +72,7 @@ def __create_task():
                     description=None,
                     ) -> None: ...
         
-    from functools import wraps
+        
 
     def make(name=None, description=None, retry_policy=None, error_strategy=None):
         def decorator(func):
@@ -105,6 +108,8 @@ def __create_task():
     
     Task.create = create
     Task.make = make
+    return Task
+
     
 def __create_pipeline():
     global Pipeline, Task
@@ -122,7 +127,6 @@ def __create_pipeline():
             self.run()
         
         def join(self, task: Task):
-            print("Added:", task.name)
             self.tasks.append(task)
             
         def __add__(self, task: Task):
@@ -152,11 +156,13 @@ def __create_pipeline():
         return decorator
         
     Task.enqueue = enqueue
+    return Pipeline
     
 def __abstract_imports():
     __create_function()
     __create_task()
-    __create_pipeline()
+    # __create_pipeline()
 
-if __name__ == 'tasker.structs':
+
+if __name__.endswith('pypeliner.tasker.structs'):
     __abstract_imports()

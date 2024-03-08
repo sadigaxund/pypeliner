@@ -1,8 +1,9 @@
 
-
-from typing import Union, List, Any
-from ..structs import Function
+from typing import Union, List, Any, Callable
 from abc import ABC, ABCMeta, abstractmethod
+# from ..structs import Function
+
+Function = Callable
 
 def default_on_error(exception):
     # That does nothing
@@ -28,6 +29,7 @@ class ErrorStrategy(ABC, metaclass=ABCMeta):
         self.blacklist = blacklist
         self.whitelist = whitelist
         self.exit_code = exit_code
+        self.success = True
 
     # Some Validation Rules for Error Handling Strategies:
     def __post_init__(self):
@@ -44,37 +46,34 @@ class ErrorStrategy(ABC, metaclass=ABCMeta):
             raise ValueError(
                 "You can not have the same exception in both blacklist & whitelist.")
 
+    def __check_if_listed__(self, select_list, exception):
+        if select_list:
+            if isinstance(select_list, List):
+                for exception_type in select_list:
+                    if isinstance(exception, exception_type):
+                        return True
+            else:
+                return True
+
+        return False
+    
     def __check_if_blacklisted__(self, exception):
-        if self.blacklist:
-            if isinstance(self.blacklist, List):
-                for exception_type in self.blacklist:
-                    if isinstance(exception, exception_type):
-                        return True
-            else:
-                return True
-
-        return False
-
+        return self.__check_if_listed__(self.blacklist, exception)
     def __check_if_whitelisted__(self, exception):
-        if self.whitelist:
-            if isinstance(self.whitelist, List):
-                for exception_type in self.whitelist:
-                    if isinstance(exception, exception_type):
-                        return True
-            else:
-                return True
+        return self.__check_if_listed__(self.whitelist, exception)
 
-        return False
 
     @abstractmethod
     def execute(self, callback: Function): 
         try:
-            return callback.call()
+            retval = callback.call()
+            self.success = True
+            return retval
         except Exception as exception:
+            self.success = False
             did_error_occur = self.__check_if_blacklisted__(exception)
             skippable_error = self.__check_if_whitelisted__(exception)
             self.on_error(exception)
-            
             # if blacklisted
             if did_error_occur:
                 if self.exit_code != -1:
@@ -95,7 +94,8 @@ class ErrorStrategy(ABC, metaclass=ABCMeta):
         ...
 
     class ReturnError(AbstractStrategy):
-        ...
+        def __init__(self, blacklist=None) -> None:
+            ...
 
     class NeverHandle(AbstractStrategy):
         ...
@@ -106,7 +106,9 @@ class ErrorStrategy(ABC, metaclass=ABCMeta):
     class ReturnValueOrError(AbstractStrategy):
         ...
 
-class NoHandle(ErrorStrategy):
+
+
+class NeverHandle(ErrorStrategy):
     
     def __init__(self) -> None: 
         super().__init__(blacklist=True,
@@ -130,7 +132,9 @@ class JustHandle(ErrorStrategy):
 
 class ReturnError(ErrorStrategy):
     def __init__(self,
-                 on_error: Function = default_on_error) -> None:
+                 on_error: Function = default_on_error,
+                 blacklist=False) -> None:
+        self.__blacklist = blacklist
         super().__init__(blacklist=True,
                          whitelist=False,
                         on_error=on_error)
@@ -139,8 +143,13 @@ class ReturnError(ErrorStrategy):
         try:
             return super().execute(callback)
         except Exception as exception:
-            return exception
-
+            is_black = self.__check_if_listed__(select_list=self.__blacklist, exception=exception)
+            self.success = not is_black
+            
+            if self.success:
+                return exception
+            else:
+                raise exception
 
 class ReturnValue(ErrorStrategy):
     def __init__(self, 

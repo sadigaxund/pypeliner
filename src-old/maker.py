@@ -50,3 +50,9 @@ def create_processor_core(module):
 def create_loader_core(module):
     funcs = extract_load_udf_from_module(module)
     return LoaderCore(*funcs)
+
+def create_junction_core(divider):
+    return JunctionCore(divider)
+
+def create_funnel_core(merger):
+    return FunnelCore(merger)

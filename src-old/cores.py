@@ -1,5 +1,5 @@
 
-from pypeliner import types as TP
+from . import types as TP
 
 __all__ = [
     'AbstractCore',
@@ -19,12 +19,12 @@ class ExtractorCore(AbstractCore):
     # MAIN
     #############
 
-    def __init__(self, udf_execute=None, udf_iterate=None, udf_available=None, udf_input_handler=None, input=None) -> TP.Void:
-        self.any_available = True
+    def __init__(self, udf_execute=None, udf_iterate=None, udf_available=None, udf_input_setter=None, input=None) -> TP.Void:
+        self.any_available=True
         self.execute = udf_execute if udf_execute else self.__execute__
         self.iterate = udf_iterate if udf_iterate else self.__iterate__
         self.available = udf_available if udf_available else self.__available__
-        self.input_handler = udf_input_handler
+        self.input_setter = udf_input_setter
         self.input = input
         
 
@@ -34,11 +34,12 @@ class ExtractorCore(AbstractCore):
     def __next__(self):
         if not self.any_available:
             raise StopIteration
-
+        
         result = self.execute()
+        
         if self.available:
             self.iterate()
-
+            
         return result
     
     # #############
@@ -68,8 +69,8 @@ class ExtractorCore(AbstractCore):
 
     @input.setter
     def input(self, new_input: TP.Function) -> TP.Void:
-        if self.input_handler and new_input:
-            self.input_handler(new_input)
+        if self.input_setter and new_input:
+            self.input_setter(new_input)
             
 
     @property
@@ -114,7 +115,7 @@ class ProcessorCore(AbstractCore):
         self.clone = deepcopy if immutable else no_change
         self.raise_error = raise_error
         self.forgiving = forgiving
-        self.fallback = fallback
+        self.fallback = fallback 
 
     def process(self, value: TP.Whatever) -> TP.Whatever:
         # Copy or not the value
@@ -155,7 +156,7 @@ class FunnelCore(AbstractCore):
         self.__merger = udf_merger
 
     def merge(self, *values: TP.Whatever) -> TP.Whatever:
-        return self.__merger(values)
+        return self.__merger(*values)
 
 
 class JunctionCore(AbstractCore):
