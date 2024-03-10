@@ -92,9 +92,6 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.destructor(exc_type, exc_value, traceback)
-        
-    # @AbstractMethod
-    # def process_input(self, input: Whatever) -> Iterable | Whatever: ...
     
     @AbstractMethod
     def available(self) -> Bool: ...

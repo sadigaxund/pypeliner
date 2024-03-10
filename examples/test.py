@@ -1,5 +1,7 @@
 # from types.custom import Whatever
 from src.cores.implement.ingress import Core, Type
+import itertools
+from src.nodes import IngressNode 
 
 class Source(Core, Type=Type.INPUT):
     def constructor(self):
@@ -11,8 +13,9 @@ class Source(Core, Type=Type.INPUT):
     def produce(self):
         return next(self.input)
     
-with Source(flatten=True, input=100) as src:
-    for i in src:
+with Source(flatten=True, input=range(10)) as src:
+    ing = IngressNode(src)
+    for i in ing.output:
         print(i)
     
 
