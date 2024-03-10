@@ -23,9 +23,7 @@ class IngressMetaCore(AbstractMetadata):
         dct['_type'] = Type
         return super().__new__(cls, name, bases, dct)
 
-
-class IngressCore(AbstractCore, metaclass=IngressMetaCore):
-    class IterationHandler:
+class IterationHandler:
         def __init__(self) -> None:
             self._iterator = itertools.chain()
             pass
@@ -49,15 +47,16 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
                     raise StopIteration
                 else:
                     raise generr
-    
+
+class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     Types = IngressType
     _type: IngressType = None
     
     def __init__(self, flatten = False, forgiving = False, input=None) -> None:
         self.flatten = flatten
         self.forgiving = forgiving
-        self.process_input(input)
-        self.handler = IngressCore.IterationHandler()
+        self.input = input
+        self.handler = IterationHandler()
         
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -68,7 +67,8 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
             setattr(cls, 'iterate', void_iterate)
         elif cls._type == IngressType.FUNCTION:
             # KEEP 'available' & 'iterate' & un-abstract others
-            setattr(cls, 'process_input', void_input_setter)
+            # setattr(cls, 'process_input', void_input_setter)
+            ...
         else:
             raise AttributeError("When extending 'IngressCore' specify 'Type' as meta variable of type 'IngressType'")
     
@@ -92,11 +92,9 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.destructor(exc_type, exc_value, traceback)
-    
-    
         
-    @AbstractMethod
-    def process_input(self, input: Whatever) -> Iterable | Whatever: ...
+    # @AbstractMethod
+    # def process_input(self, input: Whatever) -> Iterable | Whatever: ...
     
     @AbstractMethod
     def available(self) -> Bool: ...
