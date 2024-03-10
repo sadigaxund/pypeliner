@@ -12,3 +12,7 @@ def void_iterate(self):
 
 def void_input_setter(self, input):
     return input
+
+
+def no_change(x): 
+    return x
