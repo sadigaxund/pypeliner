@@ -7,7 +7,7 @@ class EgressCore(AbstractCore):
     
     def __init__(self, input, heartbeat=1) -> None:
         self.input = input
-        self.heartbeat=heartbeat
+        self.heartbeat = heartbeat
 
     def __enter__(self):
         self.constructor()

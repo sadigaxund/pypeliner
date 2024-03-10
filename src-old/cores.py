@@ -3,18 +3,7 @@ from . import types as TP
 
 class AbstractCore(): ...
 
-class LoaderCore(AbstractCore):
-    #############
-    # MAIN
-    #############
 
-    def __init__(self, *udf_loaders: TP.Function) -> TP.Void:
-        self.__loaders = (no_change,) + udf_loaders
-
-    def load(self, value: TP.Whatever) -> TP.Whatever:
-        for loader in self.__loaders:
-            loader(value)
-            
 
 class FunnelCore(AbstractCore):
     #############

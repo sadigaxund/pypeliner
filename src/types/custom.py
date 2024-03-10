@@ -6,6 +6,7 @@ from abc import (
 from enum import Enum
 from typing import (
     Any as Whatever,
+    Callable as Function,
     Callable,
     Collection,
     Dict as Dictionary,
