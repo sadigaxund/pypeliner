@@ -1,3 +1,6 @@
+def void_callback(*args, **kwargs): ...
+
+
 def void_execute(self):
     raise StopIteration("Ingress Core has finished.")
 

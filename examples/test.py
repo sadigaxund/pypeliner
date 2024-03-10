@@ -1,48 +1,29 @@
-from src.cores.implement.process import Core
-class Core1(Core): 
+# from types.custom import Whatever
+from src.cores.implement.egress import Core
+from src.types.custom import Whatever
+import time
+class Loader(Core):
     
-    @Core.step
-    def test1(record):
-        print("test 1")
-        return record + 2
-
-    @Core.step
-    def test3(record):
-        print("test 2")
-        return record + 1
-
-    @Core.step
-    def test2(record):
-        print("test 3")
-        return record + 2
-
-    @Core.step
-    def test5(record):
-        print("test 4")
-        return record + 3
-
-class Core2(Core): 
+    def consume(self, record: Whatever) -> Whatever:
+        if record == 5:
+            raise Exception("Fuck Yeah")
     
-    @Core.step
-    def test1(record):
-        print("test 1")
-        return record + 2
+    def callback(self, record, exception: Exception):
+        if exception:
+            print(f"Load Failed for Record=[{record}] with Exception=[{exception}]")
+        else:
+            print(f"Successfully Loaded Record=[{record}]")
+    def pulse(self):
+        time.sleep(1)
+        
+    def destructor(self, exc_type, exc_value, traceback):
+        print("Destruct")
+        return super().destructor(exc_type, exc_value, traceback)
+    
+    def constructor(self):
+        print("Construct")
+        return super().constructor()
+    
 
-    @Core.step
-    def test3(record):
-        print("test 2")
-        return record + 1
-
-    @Core.step
-    def test2(record):
-        print("test 3")
-        return record + 2
-
-    @Core.step
-    def test5(record):
-        print("test 4")
-        return record + 3
- 
-print(Core1.process(record=1))
-print(Core2.process(record=2))
-
+with Loader(input=range(10), heartbeat=2) as loader:
+    loader.run()

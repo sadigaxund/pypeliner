@@ -93,16 +93,7 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     def __exit__(self, exc_type, exc_value, traceback):
         self.destructor(exc_type, exc_value, traceback)
     
-    @property
-    def input(self):
-        return self._input
     
-    @input.setter
-    def input(self, new_input):
-        if isinstance(new_input, Iterable):
-            self._input = itertools.chain(new_input)
-        else:
-            self._input = itertools.chain([new_input])
         
     @AbstractMethod
     def process_input(self, input: Whatever) -> Iterable | Whatever: ...
