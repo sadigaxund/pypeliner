@@ -1,1 +1,1 @@
-from .._core_implementations.process import ProcessCore as Core
+from .._core_implementations.process import ProcessCore as Core, processor

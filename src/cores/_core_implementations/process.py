@@ -29,15 +29,19 @@ class ProcessMetaCore(AbstractMetadata):
         # Add newly formed accumulative processor as attribute
         dct['process'] = accumulative
         return super().__new__(cls, name, bases, dct)
-    
-class ProcessCore(AbstractCore, metaclass=ProcessMetaCore):
-    
-    namespaces = {}
-    
-    @staticmethod
-    def step(func):
-        module_name = func.__qualname__.split('.')[0]
-        if not module_name in ProcessCore.namespaces:
-            ProcessCore.namespaces[module_name] = CoreNamespace()
 
-        return ProcessCore.namespaces[module_name].register(func)
+
+    
+def processor(func):
+    if not hasattr(processor, 'namespaces'):
+        processor.namespaces = {}
+    
+    module_name = func.__qualname__.split('.')[0]
+    if not module_name in processor.namespaces:
+        processor.namespaces[module_name] = CoreNamespace()
+    return processor.namespaces[module_name].register(func)
+
+class ProcessCore(AbstractCore, metaclass=ProcessMetaCore):
+    ...
+    
+    

@@ -1,21 +1,48 @@
-# from types.custom import Whatever
-from src.cores.implement.ingress import Core, Type
-import itertools
-from src.nodes import IngressNode 
+from src.cores.implement.process import Core, processor
 
-class Source(Core, Type=Type.INPUT):
-    def constructor(self):
-        return super().constructor()
+class Core1(Core): 
     
-    def destructor(self, exc_type, exc_value, traceback):
-        return super().destructor(exc_type, exc_value, traceback)
+    @processor
+    def test1(record):
+        print("test 1")
+        return record + 2
+
+    @processor
+    def test3(record):
+        print("test 2")
+        return record + 1
+
+    @processor
+    def test2(record):
+        print("test 3")
+        return record + 2
+
+    @processor
+    def test5(record):
+        print("test 4")
+        return record + 3
+class Core2(Core): 
     
-    def produce(self):
-        return next(self.input)
+    @processor
+    def test1(record):
+        print("test 1")
+        return record + 2
+
+    @processor
+    def test3(record):
+        print("test 2")
+        return record + 1
+
+    @processor
+    def test2(record):
+        print("test 3")
+        return record + 2
+
+    @processor
+    def test5(record):
+        print("test 4")
+        return record + 3
     
-with Source(flatten=True, input=range(10)) as src:
-    ing = IngressNode(src)
-    for i in ing.output:
-        print(i)
-    
+print(Core1.process(record=1))
+print(Core2.process(record=2))
 

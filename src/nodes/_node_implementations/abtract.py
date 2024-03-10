@@ -34,3 +34,11 @@ class AbstractNode(AbstractClass, metaclass=AbstractMetadata):
     @output.setter
     def output(self, value):
         self.__output = value
+        
+    def __rshift__(self, other: 'AbstractNode'):
+        other.input = self.output
+        return other
+    
+    def __lshift__(self, other: 'AbstractNode'):
+        self.input = other.output
+        return self

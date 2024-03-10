@@ -18,7 +18,6 @@ class EgressCore(AbstractCore):
         
     def run(self):
         for i, record in enumerate(self.input, start=1):
-            
             any_exception = None
             try:
                 self.consume(record=record)

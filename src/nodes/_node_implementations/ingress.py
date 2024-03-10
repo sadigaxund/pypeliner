@@ -20,7 +20,3 @@ class IngressNode(AbstractNode):
     @property
     def output(self):
         return self.core
-
-    def __rshift__(self, other: AbstractNode):
-        other.input = self.output
-        return other
