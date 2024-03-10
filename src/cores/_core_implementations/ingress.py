@@ -1,4 +1,4 @@
-from .abtract import Core as AbstractCore
+from .abtract import AbstractCore
 from ...types.custom import *
 from ...types import *
 from ._templates import void_available, void_execute, void_input_setter, void_iterate
@@ -16,7 +16,7 @@ class IngressType(Enum):
     FUNCTION = 0x20
 
 
-class IngressMeta(AbstractMetadata):
+class IngressMetaCore(AbstractMetadata):
     def __new__(cls, name, bases, dct, Type: IngressType = None):
         if Type is not None and not isinstance(Type, IngressType):
             raise TypeError("Type parameter can only be of type IngressType.")
@@ -24,7 +24,7 @@ class IngressMeta(AbstractMetadata):
         return super().__new__(cls, name, bases, dct)
 
 
-class Core(AbstractClass, metaclass=IngressMeta):
+class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     class IterationHandler:
         def __init__(self) -> None:
             self._iterator = itertools.chain()
@@ -57,7 +57,7 @@ class Core(AbstractClass, metaclass=IngressMeta):
         self.flatten = flatten
         self.forgiving = forgiving
         self.process_input(input)
-        self.handler = Core.IterationHandler()
+        self.handler = IngressCore.IterationHandler()
         
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

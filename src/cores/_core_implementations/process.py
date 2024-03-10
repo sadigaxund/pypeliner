@@ -1,11 +1,10 @@
-from .abtract import Core as AbstractCore
+from .abtract import AbstractCore
 from ...types.custom import *
 from ...types import *
-from ._templates import no_change
 from ._functools import CoreNamespace, MultiFunction
 
 
-class MetaCore(AbstractMetadata):
+class ProcessMetaCore(AbstractMetadata):
     def __init__(cls, name, bases, clsdict):
         super().__init__(name, bases, clsdict)
     
@@ -31,14 +30,14 @@ class MetaCore(AbstractMetadata):
         dct['process'] = accumulative
         return super().__new__(cls, name, bases, dct)
     
-class Core(AbstractCore, metaclass=MetaCore):
+class ProcessCore(AbstractCore, metaclass=ProcessMetaCore):
     
     namespaces = {}
     
     @staticmethod
     def step(func):
         module_name = func.__qualname__.split('.')[0]
-        if not module_name in Core.namespaces:
-            Core.namespaces[module_name] = CoreNamespace()
+        if not module_name in ProcessCore.namespaces:
+            ProcessCore.namespaces[module_name] = CoreNamespace()
 
-        return Core.namespaces[module_name].register(func)
+        return ProcessCore.namespaces[module_name].register(func)
