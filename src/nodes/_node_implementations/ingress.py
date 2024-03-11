@@ -4,8 +4,8 @@ from ...cores import IngressCore
 from .abtract import AbstractNode
 
 class IngressNode(AbstractNode):
-    def __init__(self, extractor_core: IngressCore) -> Void:
-        super().__init__(extractor_core)
+    def __init__(self, ingress_core: IngressCore) -> Void:
+        super().__init__(ingress_core)
     
     def run(self):...
             

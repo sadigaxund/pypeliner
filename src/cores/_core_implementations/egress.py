@@ -5,7 +5,7 @@ import itertools
 
 class EgressCore(AbstractCore):
     
-    def __init__(self, input, heartbeat=1) -> None:
+    def __init__(self, input=None, heartbeat=1) -> None:
         self.input = input
         self.heartbeat = heartbeat
 

@@ -1,48 +1,56 @@
-from src.cores.implement.process import Core, processor
+from src.cores import *
+from src.nodes import *
+from typing import *
+import time
 
-class Core1(Core): 
-    
-    @processor
-    def test1(record):
-        print("test 1")
-        return record + 2
 
+class Extract(IngressCore, Type=IngressType.INPUT):
+    def produce(self) -> Any:
+        return next(self.input)
+    def constructor(self):
+        return super().constructor()
+    def destructor(self, exc_type, exc_value, traceback):
+        return super().destructor(exc_type, exc_value, traceback)
+
+class Transform(ProcessCore):
     @processor
-    def test3(record):
-        print("test 2")
+    def add1(record):
         return record + 1
-
-    @processor
-    def test2(record):
-        print("test 3")
-        return record + 2
-
-    @processor
-    def test5(record):
-        print("test 4")
-        return record + 3
-class Core2(Core): 
     
     @processor
-    def test1(record):
-        print("test 1")
-        return record + 2
+    def mult2(record):
+        return record * 2
 
     @processor
-    def test3(record):
-        print("test 2")
-        return record + 1
-
-    @processor
-    def test2(record):
-        print("test 3")
-        return record + 2
-
-    @processor
-    def test5(record):
-        print("test 4")
-        return record + 3
+    def mult2(record):
+        return record * 2 
     
-print(Core1.process(record=1))
-print(Core2.process(record=2))
+class Load(EgressCore):
+    def __init__(self, input=None) -> None:
+        super().__init__(input, heartbeat=3)
+    
+    def constructor(self):
+        return super().constructor()
+    
+    def callback(self, record, exception: Exception):
+        if exception == None:
+            print("Loaded:", record)
+        
+    def destructor(self, exc_type, exc_value, traceback):
+        return super().destructor(exc_type, exc_value, traceback)
+    
+    def pulse(self):
+        print("Sleeping...")
+        time.sleep(1)
+        
+    def consume(self, record: Any) -> Any:
+        return super().consume(record)
 
+
+
+with Extract(input=range(15)) as icore:
+    inode = IngressNode(icore)
+    with Load() as ecore:
+        enode = IngressNode(icore) >> EgressNode(ecore)
+        enode.run()
+        
