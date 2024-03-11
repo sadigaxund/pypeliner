@@ -4,6 +4,5 @@ from ...types import *
 
 
 class JunctionCore(AbstractCore):
-    @classmethod
     @AbstractMethod
-    def segregate(*values: Whatever) -> Whatever: ...
+    def segregate(record: Whatever) -> Whatever: ...

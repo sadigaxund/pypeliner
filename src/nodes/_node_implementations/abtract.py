@@ -6,9 +6,6 @@ class AbstractNode(AbstractClass, metaclass=AbstractMetadata):
     def __init__(self, core: AbstractCore) -> Void:
         self.core = core
 
-    @AbstractMethod
-    def run(): ...
-
     @property
     def input(self):
         return self.__input

@@ -1,5 +1,6 @@
 from src.cores import *
 from src.nodes import *
+from itertools import tee
 from typing import *
 import time
 
@@ -53,12 +54,16 @@ class Sum(FunnelCore):
             if isinstance(value, int):
                 sum += value
         return sum
+
+class Div(JunctionCore):
+    def segregate(record):
+        return record, record *-1, None
     
 
-node3 = FunnelNode(Sum) 
 node1 = IngressNode(Extract(input=range(15))) >> ProcessNode(Transform)
-node2 = IngressNode(Extract(input=range(10))) >> ProcessNode(Transform)
-node3 = node3 + node1 + node2
+node2 = node1 >> JunctionNode(Div, outflows=3)
+node3 = FunnelNode(Sum) 
+node3 = node3 + node2[0] + node2[1] + node2[2]
 
 print(list(node3.output))
 
