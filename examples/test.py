@@ -49,8 +49,7 @@ class Load(EgressCore):
 
 
 with Extract(input=range(15)) as icore:
-    inode = IngressNode(icore)
     with Load() as ecore:
-        enode = IngressNode(icore) >> EgressNode(ecore)
+        enode = IngressNode(icore) >> ProcessNode(Transform) >> EgressNode(ecore)
         enode.run()
         
