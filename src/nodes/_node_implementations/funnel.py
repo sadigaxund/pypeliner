@@ -1,10 +1,15 @@
-from ...types import *
-from ...types.custom import * 
 from ...cores import FunnelCore
 from .abtract import AbstractNode
 import itertools
 
-
+# TYPING
+from typing import (
+    Iterable,
+    Any,
+    NoReturn,
+    Generator,
+    List
+)
 
 def conjoined_enumerate(generators) -> Generator[List, None, None]:
     """_summary_
@@ -35,7 +40,7 @@ def conjoined_enumerate(generators) -> Generator[List, None, None]:
         yield next_elements
 
 class FunnelNode(AbstractNode): 
-    def __init__(self, funnel_core: FunnelCore) -> Void:
+    def __init__(self, funnel_core: FunnelCore) -> NoReturn:
         self.input_flows = list()
         super().__init__(funnel_core)
 
@@ -43,21 +48,17 @@ class FunnelNode(AbstractNode):
     def output(self):
         conjoined_flows = conjoined_enumerate(self.input_flows)
         return map(lambda flow: self.core.aggregate(*flow), conjoined_flows)
-    
-
-    def run(self):
-        return self
 
     ############################################################
     # Node Operations
     ############################################################
 
     @property
-    def input(self):
+    def input(self) -> List[Iterable]:
         return self.input_flows
     
     @input.setter
-    def input(self, new_input):
+    def input(self, new_input: Iterable | Any):
         if not isinstance(new_input, Iterable):
             new_input = [new_input]
             

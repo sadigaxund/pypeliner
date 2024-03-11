@@ -1,11 +1,20 @@
+# TOOLS
 from .abtract import AbstractCore
-from ...types.custom import *
-from ...types import *
 import itertools
+
+# TYPING
+from abc import abstractmethod as AbstractMethod
+
+from typing import (
+    Iterable,
+    Any,
+    NoReturn,
+)
+
 
 class EgressCore(AbstractCore):
     
-    def __init__(self, input=None, heartbeat=1) -> None:
+    def __init__(self, input:Iterable | Any = None, heartbeat:int = 1) -> NoReturn:
         self.input = input
         self.heartbeat = heartbeat
 
@@ -16,7 +25,7 @@ class EgressCore(AbstractCore):
     def __exit__(self, exc_type, exc_value, traceback):
         self.destructor(exc_type, exc_value, traceback)
         
-    def run(self):
+    def run(self) -> NoReturn:
         for i, record in enumerate(self.input, start=1):
             any_exception = None
             try:
@@ -31,7 +40,7 @@ class EgressCore(AbstractCore):
                 if i % self.heartbeat == 0:
                     self.pulse()
     @property
-    def input(self):
+    def input(self) -> Iterable:
         return self._input
     
     @input.setter
@@ -42,12 +51,12 @@ class EgressCore(AbstractCore):
             self._input = itertools.chain([new_input])
         
     @AbstractMethod
-    def constructor(self): ...
+    def constructor(self) -> NoReturn: ...
     @AbstractMethod
-    def destructor(self, exc_type, exc_value, traceback): ...
+    def destructor(self, exc_type, exc_value, traceback) -> NoReturn: ...
     @AbstractMethod
-    def callback(self, record, exception: Exception): ...
+    def callback(self, record: Any, exception: Exception) -> NoReturn: ...
     @AbstractMethod
-    def pulse(self): ...
+    def pulse(self) -> NoReturn: ...
     @AbstractMethod
-    def consume(self, record: Whatever) -> Whatever: ... 
+    def consume(self, record: Any) -> Any: ... 

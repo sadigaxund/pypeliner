@@ -1,8 +1,10 @@
+# TOOLS
 from .abtract import AbstractCore
-from ...types.custom import *
-from ...types import *
 
+# TYPING
+from abc import abstractmethod as AbstractMethod
+from typing import Any, Tuple
 
 class JunctionCore(AbstractCore):
     @AbstractMethod
-    def segregate(record: Whatever) -> Whatever: ...
+    def segregate(record: Any) -> Tuple[Any]: ...

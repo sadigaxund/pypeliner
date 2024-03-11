@@ -1,8 +1,21 @@
+# TOOLS
+from ._templates import void_available, void_iterate
 from .abtract import AbstractCore
-from ...types.custom import *
-from ...types import *
-from ._templates import void_available, void_execute, void_input_setter, void_iterate
+from enum import Enum
+
 import itertools
+
+# TYPING
+from abc import (
+    ABCMeta as AbstractMetadata,
+    abstractmethod as AbstractMethod
+)
+from typing import (
+    Iterable,
+    Any,
+    NoReturn,
+)
+
 
 class IngressType(Enum):
     # Input based Ingress: user sets a seed in form of a iterable
@@ -47,12 +60,12 @@ class IterationHandler:
                     raise StopIteration
                 else:
                     raise generr
-
+                
 class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     Types = IngressType
     _type: IngressType = None
     
-    def __init__(self, flatten = False, forgiving = False, input=None) -> None:
+    def __init__(self, flatten = False, forgiving = False, input: Iterable | Any =None) -> NoReturn:
         self.flatten = flatten
         self.forgiving = forgiving
         self.input = input
@@ -76,6 +89,7 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
         return self
 
     def __next__(self):
+        # TODO: Probably inefficient but works, make it better 
         try:
             val = next(self.handler)
             return val
@@ -94,10 +108,10 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
         self.destructor(exc_type, exc_value, traceback)
     
     @AbstractMethod
-    def available(self) -> Bool: ...
+    def available(self) -> bool: ...
 
     @AbstractMethod
-    def iterate(self) -> Void: ...
+    def iterate(self) -> NoReturn: ...
     
     @AbstractMethod
     def constructor(self): ...
@@ -106,4 +120,4 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     def destructor(self, exc_type, exc_value, traceback): ...
     
     @AbstractMethod
-    def produce(self) -> Whatever: ... 
+    def produce(self) -> Iterable | Any: ... 

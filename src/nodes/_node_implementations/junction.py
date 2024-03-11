@@ -1,12 +1,17 @@
-from ...types import *
-from ...types.custom import * 
 from ...cores import JunctionCore
-from .abtract import AbstractNode
+from .abtract import AbstractNode, Shiftable
 from collections import deque
+
 import itertools
 
+# TYPING
+from typing import (
+    Iterable,
+    NoReturn,
+)
+
 class Outflow:
-    def __init__(self, source, outputs=2) -> None:
+    def __init__(self, source: Iterable, outputs:int=2) -> None:
         self.source = source
         self.outputs = [deque() for _ in range(outputs)]
 
@@ -22,8 +27,8 @@ class Outflow:
         return self.outputs[i].popleft()
 
 
-class Flow():
-    def __init__(self, outflow: Outflow, index) -> None:
+class Flow(Shiftable):
+    def __init__(self, outflow: Outflow, index: int) -> None:
         self.outflow = outflow
         self.index = index
 
@@ -34,16 +39,13 @@ class Flow():
         return self.outflow.next(self.index)
     
     @property
-    def output(self):
+    def output(self) -> Iterable:
         return self
-    
-    def __rshift__(self, other: 'AbstractNode'):
-        other.input = self.output
-        return other
+
 
 
 class JunctionNode(AbstractNode):
-    def __init__(self, junction_core: JunctionCore, outflows = 2, input = None) -> Void:
+    def __init__(self, junction_core: JunctionCore, outflows = 2, input = None) -> NoReturn:
         self.outflows = outflows
         self.input = input
         super().__init__(junction_core)

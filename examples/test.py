@@ -63,11 +63,9 @@ class Div(JunctionCore):
 node1 = IngressNode(Extract(input=range(15))) >> ProcessNode(Transform)
 node2 = node1 >> JunctionNode(Div, outflows=3)
 node3 = FunnelNode(Sum) 
-node3 = node3 + node2[0] + node2[1] + node2[2]
+# node3 = node3 + node2[0] + node2[1] + 
 
-print(list(node3.output))
-
-#     with Load() as ecore:
-#         #  >> EgressNode(ecore)
-#         # enode.run()
+with Load() as ecore:
+    node = node2[0] >> EgressNode(ecore)
+    node.run()
         

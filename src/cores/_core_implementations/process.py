@@ -1,7 +1,12 @@
+# TOOLS
 from .abtract import AbstractCore
-from ...types.custom import *
-from ...types import *
-from ._functools import CoreNamespace, MultiFunction
+from ._functools import MultiFunction, CoreNamespace
+
+# TYPING
+from abc import (
+    ABCMeta as AbstractMetadata,
+)
+
 
 
 class ProcessMetaCore(AbstractMetadata):

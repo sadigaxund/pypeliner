@@ -1,9 +1,11 @@
+# TOOLS
 from .abtract import AbstractCore
-from ...types.custom import *
-from ...types import *
+
+# TYPING
+from abc import abstractmethod as AbstractMethod
+from typing import Any
 
 
 class FunnelCore(AbstractCore):
-    # @classmethod
     @AbstractMethod
-    def aggregate(*records: Whatever) -> Whatever: ...
+    def aggregate(*records: Any) -> Any: ...

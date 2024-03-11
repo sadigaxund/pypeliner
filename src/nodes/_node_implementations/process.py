@@ -1,12 +1,12 @@
-from ...types import *
-from ...types.custom import * 
 from ...cores import ProcessCore
 from .abtract import AbstractNode
 
+# TYPING
+from typing import NoReturn
+
 class ProcessNode(AbstractNode):
-    def __init__(self, processor_core: ProcessCore) -> Void:
+    def __init__(self, processor_core: ProcessCore) -> NoReturn:
         super().__init__(processor_core)
-    def run():...
     @property
     def output(self):
         # SIMPLER: return map(self.core.process, self.input)
