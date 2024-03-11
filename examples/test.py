@@ -46,10 +46,23 @@ class Load(EgressCore):
     def consume(self, record: Any) -> Any:
         return super().consume(record)
 
+class Sum(FunnelCore):
+    def aggregate(*values):
+        sum = 0
+        for value in values:
+            if isinstance(value, int):
+                sum += value
+        return sum
+    
 
+node3 = FunnelNode(Sum) 
+node1 = IngressNode(Extract(input=range(15))) >> ProcessNode(Transform)
+node2 = IngressNode(Extract(input=range(10))) >> ProcessNode(Transform)
+node3 = node3 + node1 + node2
 
-with Extract(input=range(15)) as icore:
-    with Load() as ecore:
-        enode = IngressNode(icore) >> ProcessNode(Transform) >> EgressNode(ecore)
-        enode.run()
+print(list(node3.output))
+
+#     with Load() as ecore:
+#         #  >> EgressNode(ecore)
+#         # enode.run()
         

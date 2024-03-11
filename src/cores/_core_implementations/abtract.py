@@ -9,7 +9,7 @@ class AbstractCore(AbstractClass):
     
     @input.setter
     def input(self, new_input):
-        if isinstance(new_input, Iterable):
-            self._input = itertools.chain(new_input)
-        else:
-            self._input = itertools.chain([new_input])
+        if not isinstance(new_input, Iterable):
+            new_input = [new_input]
+            
+        self._input = itertools.chain(new_input)

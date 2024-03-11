@@ -4,6 +4,6 @@ from ...types import *
 
 
 class FunnelCore(AbstractCore):
-    @classmethod
+    # @classmethod
     @AbstractMethod
     def aggregate(*values: Whatever) -> Whatever: ...
