@@ -1,4 +1,4 @@
-# TOOLS
+# UTILS
 import itertools
 
 # TYPING

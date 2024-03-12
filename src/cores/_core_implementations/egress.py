@@ -1,4 +1,4 @@
-# TOOLS
+# UTILS
 from .abtract import AbstractCore
 import itertools
 

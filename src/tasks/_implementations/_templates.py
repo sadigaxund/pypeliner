@@ -1,0 +1,3 @@
+DoesNothing = lambda: None
+
+def void_exception_handler(exc_type, exc_value, traceback): ...

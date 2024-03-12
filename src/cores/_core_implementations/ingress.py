@@ -1,4 +1,4 @@
-# TOOLS
+# UTILS
 from ._templates import void_available, void_iterate
 from .abtract import AbstractCore
 from enum import Enum

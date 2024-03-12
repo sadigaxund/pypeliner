@@ -1,4 +1,4 @@
-# TOOLS
+# UTILS
 from .abtract import AbstractCore
 from ._functools import MultiFunction, CoreNamespace
 
@@ -6,8 +6,6 @@ from ._functools import MultiFunction, CoreNamespace
 from abc import (
     ABCMeta as AbstractMetadata,
 )
-
-
 
 class ProcessMetaCore(AbstractMetadata):
     def __init__(cls, name, bases, clsdict):
