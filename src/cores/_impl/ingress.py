@@ -2,7 +2,6 @@
 from ._templates import void_available, void_iterate
 from .abtract import AbstractCore
 from enum import Enum
-from collections import deque
 import itertools
 
 # TYPING
@@ -64,7 +63,7 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     Types = IngressType
     _type: IngressType = None
     
-    def __init__(self, flatten = False, input: Iterable | Any =None) -> NoReturn:
+    def __init__(self, flatten = False, input: Iterable | Any = None) -> NoReturn:
         self.flatten = flatten
         self.input = input
         self.handler = IterationHandler()
@@ -86,22 +85,21 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     def __next__(self):
 
         while True:
-            self.handler.append(self.produce(), self.flatten)
-            if self.available():
-                self.iterate()
-            else:
-                raise StopIteration
-
             try:
+                # Exhaust Input Handler first
                 return next(self.handler)
             except StopIteration:
-                continue
+                # If handler exhausted then try to load
+                self.handler.append(self.produce(), self.flatten)
+
+                if self.available():
+                    self.iterate()
+                else:
+                    # If no more available stop all
+                    raise StopIteration
             except RuntimeError as e:
                 if str(e) == 'generator raised StopIteration':
                     raise StopIteration
-                else:
-                    continue                
-
             
 
     def __enter__(self):
@@ -117,10 +115,10 @@ class IngressCore(AbstractCore, metaclass=IngressMetaCore):
     @AbstractMethod
     def iterate(self) -> NoReturn: ...
     
-    @AbstractMethod
+    # @AbstractMethod
     def constructor(self): ...
 
-    @AbstractMethod
+    # @AbstractMethod
     def destructor(self, exc_type, exc_value, traceback): ...
     
     @AbstractMethod
