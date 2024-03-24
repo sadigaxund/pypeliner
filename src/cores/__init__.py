@@ -1,9 +1,9 @@
-from ._core_implementations.abtract import AbstractCore
-from ._core_implementations.ingress import IngressCore, IngressType
-from ._core_implementations.process import ProcessCore, processor
-from ._core_implementations.egress import EgressCore
-from ._core_implementations.junction import JunctionCore
-from ._core_implementations.funnel import FunnelCore
+from ._impl.abtract import AbstractCore
+from ._impl.ingress import IngressCore, IngressType
+from ._impl.process import ProcessCore, processor
+from ._impl.egress import EgressCore
+from ._impl.junction import JunctionCore
+from ._impl.funnel import FunnelCore
     
     
     

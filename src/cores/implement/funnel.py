@@ -1,1 +1,1 @@
-from .._core_implementations.funnel import FunnelCore as Core
+from .._impl.funnel import FunnelCore as Core

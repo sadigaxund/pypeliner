@@ -1,9 +1,9 @@
-from ._node_implementations.abtract import AbstractNode
-from ._node_implementations.ingress import IngressNode
-from ._node_implementations.process import ProcessNode
-from ._node_implementations.egress import EgressNode
-from ._node_implementations.junction import JunctionNode
-from ._node_implementations.funnel import FunnelNode
+from ._impl.abtract import AbstractNode
+from ._impl.ingress import IngressNode
+from ._impl.process import ProcessNode
+from ._impl.egress import EgressNode
+from ._impl.junction import JunctionNode
+from ._impl.funnel import FunnelNode
     
     
     

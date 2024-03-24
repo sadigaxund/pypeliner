@@ -1,1 +1,1 @@
-from .._core_implementations.egress import EgressCore as Core
+from .._impl.egress import EgressCore as Core
